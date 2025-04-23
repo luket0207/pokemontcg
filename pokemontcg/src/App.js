@@ -1,23 +1,34 @@
-import logo from './logo.svg';
+import { useState } from "react";
+import Game from "./Scenes/Game/Game";
+import Start from "./Scenes/Start/Start";
 import './App.css';
 
 function App() {
+  const [isGameActive, setIsGameActive] = useState(false);
+  const [startingPlayer, setStartingPlayer] = useState(null);
+
+  const [player1Pokemon, setPlayer1Pokemon] = useState(null);
+  const [player2Pokemon, setPlayer2Pokemon] = useState(null);
+
+  const toggleScreen = () => setIsGameActive((prev) => !prev);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {isGameActive ? (
+        <Game
+          startingPlayer={startingPlayer}
+          onToggleScreen={toggleScreen}
+          player1Pokemon={player1Pokemon}
+          player2Pokemon={player2Pokemon}
+        />
+      ) : (
+        <Start
+          onToggleScreen={toggleScreen}
+          setStartingPlayer={setStartingPlayer}
+          setPlayer1Pokemon={setPlayer1Pokemon}
+          setPlayer2Pokemon={setPlayer2Pokemon}
+        />
+      )}
     </div>
   );
 }

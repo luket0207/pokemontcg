@@ -1,0 +1,21 @@
+.start {
+	text-align: center;
+	padding-top: 50px;
+
+	button {
+		font-size: 1.5rem;
+		padding: 10px 20px;
+		cursor: pointer;
+	}
+
+	.coin-flip-result {
+		font-size: 1.5rem;
+		color: #333;
+		animation: fadeIn 0.5s ease;
+	}
+}
+
+@keyframes fadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}

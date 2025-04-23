@@ -1,0 +1,15 @@
+.actions {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	justify-items: center;
+	gap: 0.5rem;
+	margin-top: 2rem;
+
+	.status-effects {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		margin-top: 0.5rem;
+	}
+}

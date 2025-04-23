@@ -1,0 +1,44 @@
+.status {
+	margin-top: 2rem;
+	text-align: left;
+
+	h2 {
+		margin-bottom: 0.25rem;
+	}
+
+	.health-bar-wrapper {
+		position: relative;
+		background: #eee;
+		border: 1px solid #ccc;
+		border-radius: 6px;
+		overflow: hidden;
+		height: 24px;
+		width: 100%;
+		margin-bottom: 1rem;
+
+		.health-bar {
+			height: 100%;
+			transition: width 0.3s ease;
+		}
+
+		.health-bar.healthy {
+			background-color: #2ecc71;
+		}
+
+		.health-bar.low {
+			background-color: #e74c3c;
+		}
+
+		.health-label {
+			position: absolute;
+			width: 100%;
+			text-align: center;
+			top: 0;
+			left: 0;
+			font-size: 0.85rem;
+			line-height: 24px;
+			color: #333;
+			pointer-events: none;
+		}
+	}
+}

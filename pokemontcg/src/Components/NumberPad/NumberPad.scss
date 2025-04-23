@@ -1,0 +1,17 @@
+.number-pad {
+	display: grid;
+	gap: 0.5rem;
+    width: 300px;
+
+	.row {
+		display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        justify-content: space-around;
+		gap: 0.5rem;
+
+		button {
+			padding: 0.5rem 0.75rem;
+			font-size: 1rem;
+		}
+	}
+}
