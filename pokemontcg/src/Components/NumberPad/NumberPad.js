@@ -11,6 +11,10 @@ const NumberPad = ({ onSubmit, onClear, onChange, value }) => {
 
 	return (
 		<div className="number-pad">
+			<div className="number-display">
+				<p>Selected: <strong>{value}</strong></p>
+			</div>
+
 			<div className="row">
 				{hundreds.map((num) => (
 					<button key={num} onClick={() => handleAdd(num)}>{num}</button>

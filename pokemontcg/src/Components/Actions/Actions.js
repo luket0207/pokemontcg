@@ -5,15 +5,19 @@ import './Actions.scss';
 const Actions = ({
 	onHeal,
 	onNewMaxHealth,
+	onNewPokemon,
 	onPoison,
 	onBurn,
 	onConfuse,
 	onParalyze,
 	onSleep,
 	onAttack,
-	onEndTurn
+	onEndTurn,
+	currentEffects = []
 }) => {
 	const [showEffects, setShowEffects] = useState(false);
+
+	const isDisabled = currentEffects.includes("asleep") || currentEffects.includes("paralyzed");
 
 	return (
 		<div className="actions">
@@ -24,18 +28,19 @@ const Actions = ({
 
 			{showEffects && (
 				<div className="status-effects">
-					<Button onClick={onPoison}>Poison Opponent</Button>
-					<Button onClick={onBurn}>Burn Opponent</Button>
-					<Button onClick={onConfuse}>Confuse Opponent</Button>
-					<Button onClick={onParalyze}>Paralyze Opponent</Button>
-					<Button onClick={onSleep}>Make Opponent Fall Asleep</Button>
+					<Button onClick={onPoison}>Poison</Button>
+					<Button onClick={onBurn}>Burn</Button>
+					<Button onClick={onConfuse}>Confuse</Button>
+					<Button onClick={onParalyze}>Paralyze</Button>
+					<Button onClick={onSleep}>Sleep</Button>
 				</div>
 			)}
 
 			{/* Regular actions */}
 			<Button onClick={onHeal}>Heal</Button>
-			<Button onClick={onNewMaxHealth}>New Max Health</Button>
-			<Button onClick={onAttack}>Attack</Button>
+			<Button onClick={onNewMaxHealth}>Increase Max Health</Button>
+			<Button onClick={onNewPokemon} disabled={isDisabled}>New Pokemon</Button>
+			<Button onClick={onAttack} disabled={isDisabled}>Attack</Button>
 			<Button onClick={onEndTurn}>End Turn</Button>
 		</div>
 	);

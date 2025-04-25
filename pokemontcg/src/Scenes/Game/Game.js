@@ -2,8 +2,11 @@ import { useState } from "react";
 import CoinFlip from "../../Components/CoinFlip/CoinFlip";
 import PokemonDisplay from "../../Components/PokemonDisplay/PokemonDisplay";
 import Actions from "../../Components/Actions/Actions";
+import AddPokemon from "../../Components/AddPokemon/AddPokemon";
+import NumberPad from "../../Components/NumberPad/NumberPad";
 import "./Game.scss";
 import Button from "../../Components/Button/Button";
+import InbetweenTurns from "../../Components/InbetweenTurns/InbetweenTurns";
 
 const Game = ({
   startingPlayer,
@@ -22,6 +25,43 @@ const Game = ({
   const [tempHealth, setTempHealth] = useState("");
 
   const [showEndTurnConfirm, setShowEndTurnConfirm] = useState(false);
+  const [isReplacingPokemon, setIsReplacingPokemon] = useState(false);
+
+  const [isChoosingStatusTarget, setIsChoosingStatusTarget] = useState(false);
+  const [pendingEffect, setPendingEffect] = useState(null);
+
+  const [isHealing, setIsHealing] = useState(false);
+  const [healAmount, setHealAmount] = useState(0);
+
+  const [isAddingMaxHealth, setIsAddingMaxHealth] = useState(false);
+  const [addAmount, setAddAmount] = useState(0);
+
+  const [isAttacking, setIsAttacking] = useState(false);
+  const [attackAmount, setAttackAmount] = useState(0);
+
+  const [isBetweenTurns, setIsBetweenTurns] = useState(false);
+  const [nextTurnText, setNextTurnText] = useState("");
+  const [forcedReplacePlayer, setForcedReplacePlayer] = useState(null);
+  const [statusMessages, setStatusMessages] = useState([]);
+
+  const [coinCallback, setCoinCallback] = useState(null);
+
+  const triggerCoinFlip = (callback) => {
+    setIsCoinFlipping(true);
+    setCoinResult(null);
+    setCoinCallback(() => callback);
+  };
+
+  const handleCoinFlipResult = (result) => {
+    setCoinResult(result);
+    setTimeout(() => {
+      setIsCoinFlipping(false);
+      if (coinCallback) {
+        coinCallback(result);
+        setCoinCallback(null);
+      }
+    }, 1500);
+  };
 
   const handleBack = () => {
     onToggleScreen();
@@ -30,13 +70,6 @@ const Game = ({
   const handleFlipCoin = () => {
     setIsCoinFlipping(true);
     setCoinResult(null);
-  };
-
-  const handleCoinFlipResult = (result) => {
-    setCoinResult(result);
-    setTimeout(() => {
-      setIsCoinFlipping(false);
-    }, 1500);
   };
 
   const handleHealthSubmit = () => {
@@ -75,125 +108,333 @@ const Game = ({
 
   const playerNeedsPokemon = getCurrentPokemon() === null;
 
-  const handleHeal = () => {
-    const poke = getCurrentPokemon();
-    if (!poke) return;
+  const handleNewPokemon = () => {
+    setIsReplacingPokemon(true);
+  };
 
-    const healed = {
-      ...poke,
-      currentHealth: Math.min(poke.currentHealth + 10, poke.maxHealth),
+  const handleReplacePokemon = (pokemon) => {
+    setCurrentPokemon(pokemon);
+    setIsReplacingPokemon(false);
+  };
+
+  const handleHeal = () => {
+    setIsHealing(true);
+    setHealAmount(0);
+  };
+
+  const handleSubmitHeal = () => {
+    const amount = Math.max(0, healAmount);
+    const current = getCurrentPokemon();
+    if (!current) return;
+
+    const updated = {
+      ...current,
+      currentHealth: Math.min(
+        current.currentHealth + amount,
+        current.maxHealth
+      ),
     };
-    setCurrentPokemon(healed);
+
+    setCurrentPokemon(updated);
+    setIsHealing(false);
+    setHealAmount(0);
   };
 
   const handleNewMaxHealth = () => {
-    const poke = getCurrentPokemon();
-    if (!poke) return;
-
-    const bonus = 10;
-    const updated = {
-      ...poke,
-      maxHealth: poke.maxHealth + bonus,
-      currentHealth: poke.currentHealth + bonus,
-    };
-    setCurrentPokemon(updated);
+    setIsAddingMaxHealth(true);
+    setAddAmount(0);
   };
 
-  const handleEffect = (effect) => {
-    const opponent = getOpponentPokemon();
-    if (!opponent) return;
-
-    const updated = { ...opponent, [effect]: true };
-    setOpponentPokemon(updated);
+  const handleStatusEffect = (effect) => {
+    setPendingEffect(effect);
+    setIsChoosingStatusTarget(true);
   };
 
   const handleAttack = () => {
+    setIsAttacking(true);
+    setAttackAmount(0);
+  };
+
+  const handleSubmitAttack = () => {
+    const damage = Math.max(0, attackAmount);
     const opponent = getOpponentPokemon();
     if (!opponent) return;
 
-    const damage = 10;
     const updated = {
       ...opponent,
       currentHealth: Math.max(opponent.currentHealth - damage, 0),
     };
+
     setOpponentPokemon(updated);
+    setIsAttacking(false);
+    setAttackAmount(0);
   };
 
   const handleEndTurn = () => {
-    setCurrentTurn((prev) => (prev === "Player 1" ? "Player 2" : "Player 1"));
-    setPendingHealthInput(false);
+    const next = currentTurn === "Player 1" ? "Player 2" : "Player 1";
+    setNextTurnText(`${next}'s turn`);
+    setIsBetweenTurns(true);
+    setShowEndTurnConfirm(false);
+  };
+
+  const handleForcedReplace = (pokemon) => {
+    if (forcedReplacePlayer === "Player 1") {
+      setPlayer1Pokemon(pokemon);
+    } else {
+      setPlayer2Pokemon(pokemon);
+    }
+    setForcedReplacePlayer(null);
+    setIsBetweenTurns(false);
+    setCurrentTurn(forcedReplacePlayer);
+  };
+
+  const handleSubmitAddMaxHealth = () => {
+    const amount = Math.max(0, addAmount);
+    const current = getCurrentPokemon();
+    if (!current) return;
+
+    const updated = {
+      ...current,
+      maxHealth: current.maxHealth + amount,
+      currentHealth: current.currentHealth + amount,
+    };
+
+    setCurrentPokemon(updated);
+    setIsAddingMaxHealth(false);
+    setAddAmount(0);
+  };
+
+  const applyEffect = (target) => {
+    if (!pendingEffect) return;
+
+    if (target === "yours" || target === "both") {
+      const current = getCurrentPokemon();
+      const alreadyHasEffect = (current.effects || []).includes(pendingEffect);
+      if (!alreadyHasEffect) {
+        const updated = {
+          ...current,
+          effects: [...(current.effects || []), pendingEffect],
+        };
+        setCurrentPokemon(updated);
+      }
+    }
+
+    if (target === "theirs" || target === "both") {
+      const opponent = getOpponentPokemon();
+      const alreadyHasEffect = (opponent.effects || []).includes(pendingEffect);
+      if (!alreadyHasEffect) {
+        const updated = {
+          ...opponent,
+          effects: [...(opponent.effects || []), pendingEffect],
+        };
+        setOpponentPokemon(updated);
+      }
+    }
+
+    setPendingEffect(null);
+    setIsChoosingStatusTarget(false);
   };
 
   return (
     <div className="game">
-      {/* <p>
-        It's <strong>{currentTurn}</strong>'s turn!
-      </p> */}
+      {isBetweenTurns || forcedReplacePlayer ? (
+        <>
+          {isBetweenTurns && (
+            <InbetweenTurns
+              player1Pokemon={player1Pokemon}
+              player2Pokemon={player2Pokemon}
+              setPlayer1Pokemon={setPlayer1Pokemon}
+              setPlayer2Pokemon={setPlayer2Pokemon}
+              currentTurn={currentTurn}
+              nextTurn={currentTurn === "Player 1" ? "Player 2" : "Player 1"}
+              onComplete={(updatedP1, updatedP2) => {
+                const p1Dead = updatedP1.currentHealth === 0;
+                const p2Dead = updatedP2.currentHealth === 0;
 
-      <div className="buttons">
-        <Button onClick={handleBack}>Back to Start</Button>
-        <Button onClick={handleFlipCoin}>Flip Coin</Button>
-      </div>
+                setPlayer1Pokemon(updatedP1);
+                setPlayer2Pokemon(updatedP2);
 
-      {isCoinFlipping && (
-        <div className="coin-flip-overlay">
-          <CoinFlip onResult={handleCoinFlipResult} />
-          {coinResult && (
-            <p className="coin-result">{coinResult.toUpperCase()}!</p>
+                if (p1Dead) {
+                  setForcedReplacePlayer("Player 1");
+                } else if (p2Dead) {
+                  setForcedReplacePlayer("Player 2");
+                } else {
+                  setCurrentTurn(
+                    currentTurn === "Player 1" ? "Player 2" : "Player 1"
+                  );
+                  setIsBetweenTurns(false);
+                }
+              }}
+              message={nextTurnText}
+            />
           )}
-        </div>
-      )}
 
-      {playerNeedsPokemon && pendingHealthInput && (
-        <div className="pokemon-entry">
-          <p>{currentTurn}, enter a max health for your Pokémon:</p>
-          <input
-            type="number"
-            value={tempHealth}
-            onChange={(e) => setTempHealth(e.target.value)}
-            placeholder="Enter max health"
-          />
-          <button onClick={handleHealthSubmit}>Add Pokémon</button>
-        </div>
-      )}
-
-      <PokemonDisplay
-        player1Pokemon={player1Pokemon}
-        player2Pokemon={player2Pokemon}
-        currentTurn={currentTurn}
-      />
-
-      {!playerNeedsPokemon && (
-        <Actions
-          onHeal={handleHeal}
-          onNewMaxHealth={handleNewMaxHealth}
-          onPoison={() => handleEffect("poisoned")}
-          onBurn={() => handleEffect("burned")}
-          onConfuse={() => handleEffect("confused")}
-          onParalyze={() => handleEffect("paralyzed")}
-          onSleep={() => handleEffect("asleep")}
-          onAttack={handleAttack}
-          onEndTurn={() => setShowEndTurnConfirm(true)}
-        />
-      )}
-
-      {showEndTurnConfirm && (
-        <div className="confirm-overlay">
-          <div className="confirm-modal">
-            <p>Are you sure you want to end your turn?</p>
-            <div className="confirm-buttons">
-              <Button
-                onClick={() => {
-                  handleEndTurn();
-                  setShowEndTurnConfirm(false);
-                }}
-              >
-                Yes
-              </Button>
-              <Button onClick={() => setShowEndTurnConfirm(false)}>No</Button>
-            </div>
+          {forcedReplacePlayer && (
+			<>
+			<h2>{forcedReplacePlayer}'s Pokemon was knocked out!</h2>
+            <AddPokemon
+              playerName={forcedReplacePlayer}
+              onSubmit={handleForcedReplace}
+              onEndGame={() => onToggleScreen()}
+            />
+			</>
+          )}
+        </>
+      ) : (
+        <>
+          <div className="buttons">
+            <Button onClick={handleBack}>Back to Start</Button>
+            <Button onClick={handleFlipCoin}>Flip Coin</Button>
           </div>
-        </div>
+
+          {isCoinFlipping && (
+            <div className="coin-flip-overlay">
+              <CoinFlip onResult={handleCoinFlipResult} />
+              {coinResult && (
+                <p className="coin-result">{coinResult.toUpperCase()}!</p>
+              )}
+            </div>
+          )}
+
+          {playerNeedsPokemon && pendingHealthInput && (
+            <div className="pokemon-entry">
+              <p>{currentTurn}, enter a max health for your Pokémon:</p>
+              <input
+                type="number"
+                value={tempHealth}
+                onChange={(e) => setTempHealth(e.target.value)}
+                placeholder="Enter max health"
+              />
+              <button onClick={handleHealthSubmit}>Add Pokémon</button>
+            </div>
+          )}
+
+          <PokemonDisplay
+            player1Pokemon={player1Pokemon}
+            player2Pokemon={player2Pokemon}
+            currentTurn={currentTurn}
+            onRemoveEffect={(player, effect) => {
+              if (player === "Player 1") {
+                setPlayer1Pokemon((prev) => ({
+                  ...prev,
+                  effects: (prev.effects || []).filter((e) => e !== effect),
+                }));
+              } else {
+                setPlayer2Pokemon((prev) => ({
+                  ...prev,
+                  effects: (prev.effects || []).filter((e) => e !== effect),
+                }));
+              }
+            }}
+          />
+
+          {isChoosingStatusTarget && (
+            <div className="choose-effect-target">
+              <p>
+                Apply <strong>{pendingEffect}</strong> to:
+              </p>
+              <Button onClick={() => applyEffect("yours")}>Your Pokémon</Button>
+              <Button onClick={() => applyEffect("theirs")}>
+                Their Pokémon
+              </Button>
+              <Button onClick={() => applyEffect("both")}>Both</Button>
+              <Button onClick={() => setIsChoosingStatusTarget(false)}>
+                Cancel
+              </Button>
+            </div>
+          )}
+
+          {!playerNeedsPokemon &&
+            !isReplacingPokemon &&
+            !isChoosingStatusTarget && (
+              <Actions
+                onHeal={handleHeal}
+                onNewMaxHealth={handleNewMaxHealth}
+                onNewPokemon={handleNewPokemon}
+                onPoison={() => handleStatusEffect("poisoned")}
+                onBurn={() => handleStatusEffect("burned")}
+                onConfuse={() => handleStatusEffect("confused")}
+                onParalyze={() => handleStatusEffect("paralyzed")}
+                onSleep={() => handleStatusEffect("asleep")}
+                onAttack={handleAttack}
+                onEndTurn={() => setShowEndTurnConfirm(true)}
+                currentEffects={getCurrentPokemon()?.effects || []}
+              />
+            )}
+
+          {isAttacking && (
+            <div className="attack-panel">
+              <p>
+                Choose how much damage to deal to{" "}
+                {currentTurn === "Player 1" ? "Player 2" : "Player 1"}:
+              </p>
+              <NumberPad
+                value={attackAmount}
+                onChange={setAttackAmount}
+                onClear={() => setAttackAmount(0)}
+                onSubmit={handleSubmitAttack}
+              />
+              <Button onClick={() => setIsAttacking(false)}>Cancel</Button>
+            </div>
+          )}
+
+          {isHealing && (
+            <div className="heal-panel">
+              <p>Choose how much to heal {currentTurn}'s Pokémon:</p>
+              <NumberPad
+                value={healAmount}
+                onChange={setHealAmount}
+                onClear={() => setHealAmount(0)}
+                onSubmit={handleSubmitHeal}
+              />
+              <Button onClick={() => setIsHealing(false)}>Cancel</Button>
+            </div>
+          )}
+
+          {isAddingMaxHealth && (
+            <div className="add-health-panel">
+              <p>Increase {currentTurn}'s max and current health by:</p>
+              <NumberPad
+                value={addAmount}
+                onChange={setAddAmount}
+                onClear={() => setAddAmount(0)}
+                onSubmit={handleSubmitAddMaxHealth}
+              />
+              <Button onClick={() => setIsAddingMaxHealth(false)}>
+                Cancel
+              </Button>
+            </div>
+          )}
+
+          {isReplacingPokemon && (
+            <AddPokemon
+              playerName={currentTurn}
+              onSubmit={handleReplacePokemon}
+              onEndGame={() => setIsReplacingPokemon(false)}
+            />
+          )}
+
+          {showEndTurnConfirm && (
+            <div className="confirm-overlay">
+              <div className="confirm-modal">
+                <p>Are you sure you want to end your turn?</p>
+                <div className="confirm-buttons">
+                  <Button
+                    onClick={() => {
+                      handleEndTurn();
+                      setShowEndTurnConfirm(false);
+                    }}
+                  >
+                    Yes
+                  </Button>
+                  <Button onClick={() => setShowEndTurnConfirm(false)}>
+                    No
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
