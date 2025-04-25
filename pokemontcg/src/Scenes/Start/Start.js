@@ -2,12 +2,13 @@ import { useState } from "react";
 import CoinFlip from "../../Components/CoinFlip/CoinFlip";
 import AddPokemon from "../../Components/AddPokemon/AddPokemon";
 import "./Start.scss";
+import Button from "../../Components/Button/Button";
 
 const Start = ({
   onToggleScreen,
   setStartingPlayer,
   setPlayer1Pokemon,
-  setPlayer2Pokemon
+  setPlayer2Pokemon,
 }) => {
   const [phase, setPhase] = useState("idle"); // idle → p1 → p2 → flipping → done
   const [flipResult, setFlipResult] = useState(null);
@@ -37,20 +38,23 @@ const Start = ({
     setStartingPlayer(winner);
 
     setTimeout(() => {
-      onToggleScreen();
+      onToggleScreen(winner); 
     }, 1500);
   };
 
   return (
     <div className="start">
-      {phase === "idle" && <button onClick={handleStartClick}>Start Game</button>}
+      {phase === "idle" && (
+        <Button onClick={handleStartClick}>Start Game</Button>
+      )}
 
       {phase === "p1" && (
         <AddPokemon
           playerName="Player 1"
           onSubmit={handleSubmitPokemon}
           onEndGame={handleEndGame}
-		  isPreGame={true}
+          isPreGame={true}
+		  currentTurn={"Player 1"}
         />
       )}
 
@@ -59,15 +63,18 @@ const Start = ({
           playerName="Player 2"
           onSubmit={handleSubmitPokemon}
           onEndGame={handleEndGame}
-		  isPreGame={true}
+          isPreGame={true}
+		  currentTurn={"Player 1"}
         />
       )}
 
-      {phase === "flipping" && !flipResult && <CoinFlip onResult={handleResult} />}
+      {phase === "flipping" && !flipResult && (
+        <CoinFlip onResult={handleResult} />
+      )}
 
       {flipResult && (
         <div className="coin-flip-result">
-          {flipResult === "Player 1" ? (
+          {flipResult === "Player 2" ? (
             <span className="arrow arrow-up">↑</span>
           ) : (
             <span className="arrow arrow-down">↓</span>

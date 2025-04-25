@@ -1,15 +1,26 @@
 .btn {
-	padding: 0.6rem 1.2rem;
-	font-size: 1rem;
-	background-color: #3498db;
-	color: white;
-	border: none;
-	border-radius: 5px;
+	position: relative; // required for absolute positioning of ::after
+	font-size: 18px;
+	background-color: #fff;
+	color: black;
+	border: solid 2px darkslategray;
+	border-radius: 9999px;
 	cursor: pointer;
 	transition: background-color 0.2s ease;
+	padding: 0.6rem 1.2rem;
+    transition: all .3s ease;
+    margin: 0px 10px;
 
-	&:hover {
-		background-color: #2980b9;
+	&::after {
+		content: "";
+		position: absolute;
+		top: -4px;
+		left: -4px;
+		right: -4px;
+		bottom: -4px;
+		border-radius: 9999px;
+		background-color: white;
+		z-index: -1;
 	}
 
 	&--disabled {

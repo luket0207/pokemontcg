@@ -1,7 +1,8 @@
+import Button from '../Button/Button';
 import './NumberPad.scss';
 
 const tens = [10, 20, 30, 40, 50, 60, 70, 80, 90];
-const hundreds = [100, 200, 300, 400, 500, 600, 700, 800, 900];
+const hundreds = [100, 200, 300, 400, 500];
 
 const NumberPad = ({ onSubmit, onClear, onChange, value }) => {
 	const handleAdd = (num) => {
@@ -17,17 +18,17 @@ const NumberPad = ({ onSubmit, onClear, onChange, value }) => {
 
 			<div className="row">
 				{hundreds.map((num) => (
-					<button key={num} onClick={() => handleAdd(num)}>{num}</button>
+					<div key={num} className='hundred' onClick={() => handleAdd(num)}><p>{num}</p></div>
 				))}
 			</div>
 			<div className="row">
 				{tens.map((num) => (
-					<button key={num} onClick={() => handleAdd(num)}>{num}</button>
+					<div key={num} className='ten' onClick={() => handleAdd(num)}><p>{num}</p></div>
 				))}
 			</div>
-			<div className="row">
-				<button onClick={onClear}>Clear</button>
-				<button onClick={() => onSubmit(value)} disabled={value <= 0}>Submit</button>
+			<div className="buttons">
+				<Button onClick={onClear}>Clear</Button>
+				<Button onClick={() => onSubmit(value)} disabled={value <= 0}>Submit</Button>
 			</div>
 		</div>
 	);

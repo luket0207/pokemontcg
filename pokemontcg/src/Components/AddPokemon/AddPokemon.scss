@@ -1,8 +1,13 @@
 .add-pokemon {
 	text-align: center;
 	margin-top: 2rem;
+    transition: all .3s ease;
 
 	h2 {
 		margin-bottom: 0.5rem;
 	}
+}
+
+.opposite-player {
+    transform: rotate(180deg);
 }

@@ -1,6 +1,35 @@
 .App {
-  height: 600px;
-  width: 320px;
-  background-color: teal;
-  margin: auto;
+  height: 650px;
+  width: 350px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transition: all .3s ease;
+  border: solid 2px black;
+}
+
+#root {
+  background-color: darkslategray;
+  height: 100vh;
+}
+
+h1, h2, h3, h4, h5, p, button {
+  font-family: "Happy Monkey", system-ui;
+  font-weight: 400;
+  font-style: normal;
+}
+
+h1, h2, h3, h4, h5, p {
+  font-family: "Happy Monkey", system-ui;
+  font-weight: 400;
+  font-style: normal;
+  color: white;
+}
+
+.player-one {
+  transform: translate(-50%, -50%);
+}
+
+.player-two {
+  transform: translate(-50%, -50%) rotate(180deg);
 }

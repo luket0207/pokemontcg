@@ -3,11 +3,12 @@ import NumberPad from '../NumberPad/NumberPad';
 import Button from '../Button/Button';
 import './AddPokemon.scss';
 
-const AddPokemon = ({ playerName, onSubmit, onEndGame, isPreGame = false }) => {
+const AddPokemon = ({ playerName, onSubmit, onEndGame, onCancle, isPreGame = false, currentTurn, knockedOut = false }) => {
 	const [maxHealth, setMaxHealth] = useState(0);
 	const [currentHealth, setCurrentHealth] = useState(0);
 	const [maxHealthSet, setMaxHealthSet] = useState(false);
 	const [showCurrentHealthPad, setShowCurrentHealthPad] = useState(false);
+    const isOppositePlayer = currentTurn && playerName !== currentTurn;
 
 	const handleClearMax = () => {
 		setMaxHealth(0);
@@ -32,7 +33,8 @@ const AddPokemon = ({ playerName, onSubmit, onEndGame, isPreGame = false }) => {
 	};
 
 	return (
-		<div className="add-pokemon">
+		<div className={`add-pokemon ${isOppositePlayer ? "opposite-player" : ""}`}>
+            {knockedOut && <h2>{playerName}'s Pokemon was knocked out!</h2>}
 			<h2>{playerName}, add your Pokémon</h2>
 
 			{/* Step 1: Enter Max Health */}
@@ -78,7 +80,8 @@ const AddPokemon = ({ playerName, onSubmit, onEndGame, isPreGame = false }) => {
 			)}
 
 			{/* Skip this button pre-game */}
-			{!isPreGame && <Button onClick={onEndGame}>End Game</Button>}
+			{!isPreGame && !onCancle && <Button onClick={onEndGame}>End Game</Button>}
+			{!isPreGame && onCancle && <Button onClick={onCancle}>Cancel</Button>}
 		</div>
 	);
 };

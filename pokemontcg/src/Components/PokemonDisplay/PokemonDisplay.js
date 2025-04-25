@@ -20,8 +20,7 @@ const PokemonDisplay = ({
 
     const { currentHealth, maxHealth, effects = [] } = pokemon;
     const healthPercentage = (currentHealth / maxHealth) * 100;
-    const dangerThreshold = Math.min(20, maxHealth * 0.1);
-    const isLowHealth = currentHealth < dangerThreshold;
+    const isLowHealth = currentHealth <= 20;
 
     return (
       <div className="pokemon-block">

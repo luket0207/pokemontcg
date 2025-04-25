@@ -1,17 +1,41 @@
 .number-pad {
 	display: grid;
 	gap: 0.5rem;
-    width: 300px;
+    width: 90%;
+    padding: 0 5%;
 
 	.row {
 		display: grid;
         grid-template-columns: repeat(5, 1fr);
-        justify-content: space-around;
+        justify-items: center;
 		gap: 0.5rem;
 
-		button {
-			padding: 0.5rem 0.75rem;
+		div {
+			padding: 0.5rem;
 			font-size: 1rem;
+            border-radius: 50%;
+            height: 40px;
+            width: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+
+            p {
+                margin: 0;
+            }
 		}
 	}
+
+    .hundred {
+        background-color: black;
+        margin-bottom: 30px;
+    }
+
+    .ten {
+        background-color: darkgray;
+    }
+    .buttons {
+        margin-top: 20px;
+    }
 }
