@@ -80,8 +80,8 @@ const AddPokemon = ({ playerName, onSubmit, onEndGame, onCancle, isPreGame = fal
 			)}
 
 			{/* Skip this button pre-game */}
-			{!isPreGame && !onCancle && <Button onClick={onEndGame}>End Game</Button>}
-			{!isPreGame && onCancle && <Button onClick={onCancle}>Cancel</Button>}
+			{!isPreGame && !onCancle && <Button type="secondary" onClick={onEndGame}>End Game</Button>}
+			{!isPreGame && onCancle && <Button type="secondary" onClick={onCancle}>Cancel</Button>}
 		</div>
 	);
 };

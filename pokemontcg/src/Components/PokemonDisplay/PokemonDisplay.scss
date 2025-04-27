@@ -1,44 +1,110 @@
 .status {
-	margin-top: 2rem;
-	text-align: left;
+  margin-top: 2rem;
+  text-align: left;
 
-	h2 {
-		margin-bottom: 0.25rem;
-	}
+  h2 {
+    margin-bottom: 0.25rem;
+  }
 
-	.health-bar-wrapper {
-		position: relative;
-		background: #eee;
-		border: 1px solid #ccc;
-		border-radius: 6px;
-		overflow: hidden;
-		height: 24px;
-		width: 100%;
-		margin-bottom: 1rem;
+  .health-bar-wrapper {
+    position: relative;
+    background: #eee;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    overflow: hidden;
+    height: 24px;
+    width: 100%;
+    margin-bottom: 5px;
 
-		.health-bar {
-			height: 100%;
-			transition: width 0.3s ease;
-		}
+    .health-bar {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
 
-		.health-bar.healthy {
-			background-color: #2ecc71;
-		}
+    .health-bar.healthy {
+      background-color: #2ecc71;
+    }
 
-		.health-bar.low {
-			background-color: #e74c3c;
-		}
+    .health-bar.low {
+      background-color: #e74c3c;
+    }
 
-		.health-label {
-			position: absolute;
-			width: 100%;
-			text-align: center;
-			top: 0;
-			left: 0;
-			font-size: 0.85rem;
-			line-height: 24px;
-			color: #333;
-			pointer-events: none;
-		}
-	}
+    .health-label {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      top: 0;
+      left: 0;
+      font-size: 0.85rem;
+      line-height: 24px;
+      color: #333;
+      pointer-events: none;
+      margin: 0;
+    }
+  }
+  &-effects {
+    height: 30px;
+    display: flex;
+
+    .effect-pill {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      margin-right: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+
+      &:hover {
+        &::after {
+          content: "X";
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: 100%;
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: black;
+          color: white;
+        }
+      }
+
+      p {
+        margin: 0;
+      }
+
+      &.poisoned {
+        background-color: purple;
+      }
+
+      &.burned {
+        background-color: red;
+      }
+
+      &.paralyzed {
+        background-color: yellow;
+        p {
+          color: black;
+        }
+      }
+
+      &.confused {
+        background-color: grey;
+      }
+
+      &.asleep {
+        background-color: white;
+        p {
+          color: black;
+        }
+      }
+    }
+  }
 }

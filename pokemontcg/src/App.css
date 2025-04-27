@@ -5,7 +5,6 @@
   top: 50%;
   left: 50%;
   transition: all .3s ease;
-  border: solid 2px black;
 }
 
 #root {

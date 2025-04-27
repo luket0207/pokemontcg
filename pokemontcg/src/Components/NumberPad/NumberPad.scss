@@ -1,41 +1,47 @@
 .number-pad {
-	display: grid;
-	gap: 0.5rem;
-    width: 90%;
-    padding: 0 5%;
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 20px;
 
-	.row {
-		display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        justify-items: center;
-		gap: 0.5rem;
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
 
-		div {
-			padding: 0.5rem;
-			font-size: 1rem;
-            border-radius: 50%;
-            height: 40px;
-            width: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
+    div {
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 50%;
+      height: 40px;
+      width: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
 
-            p {
-                margin: 0;
-            }
-		}
-	}
-
-    .hundred {
-        background-color: black;
-        margin-bottom: 30px;
+      p {
+        margin: 0;
+      }
     }
+  }
 
-    .ten {
-        background-color: darkgray;
+  .number-display {
+    p {
+        font-size: 28px;
     }
-    .buttons {
-        margin-top: 20px;
-    }
+  }
+
+  .hundred {
+    background-color: black;
+    margin-bottom: 30px;
+  }
+
+  .ten {
+    background-color: darkgray;
+  }
+
+  .buttons {
+    margin-top: 40px;
+  }
 }

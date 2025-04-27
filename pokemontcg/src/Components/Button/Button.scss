@@ -1,31 +1,46 @@
 .btn {
-	position: relative; // required for absolute positioning of ::after
-	font-size: 18px;
-	background-color: #fff;
-	color: black;
-	border: solid 2px darkslategray;
-	border-radius: 9999px;
-	cursor: pointer;
-	transition: background-color 0.2s ease;
-	padding: 0.6rem 1.2rem;
-    transition: all .3s ease;
-    margin: 0px 10px;
+  position: relative; // required for absolute positioning of ::after
+  font-size: 16px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  padding: 0.6rem 1.2rem;
+  transition: all 0.3s ease;
+  margin: 0px 10px;
 
-	&::after {
-		content: "";
-		position: absolute;
-		top: -4px;
-		left: -4px;
-		right: -4px;
-		bottom: -4px;
-		border-radius: 9999px;
-		background-color: white;
-		z-index: -1;
-	}
+  &::after {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 9999px;
+    z-index: -1;
+  }
 
-	&--disabled {
-		background-color: #ccc;
-		color: #666;
-		cursor: not-allowed;
-	}
+  &.btn--primary {
+    background-color: #fff;
+    color: black;
+    border: solid 2px darkslategray;
+
+    &::after {
+      background-color: white;
+    }
+  }
+
+  &.btn--secondary {
+    background-color: teal;
+    color: black;
+    border: solid 2px white;
+
+    &::after {
+      background-color: teal;
+    }
+  }
+
+  &--disabled {
+    opacity: .3;
+    cursor: not-allowed;
+  }
 }

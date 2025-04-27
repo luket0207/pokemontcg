@@ -30,26 +30,29 @@ const PokemonDisplay = ({
             className={`health-bar ${isLowHealth ? "low" : "healthy"}`}
             style={{ width: `${healthPercentage}%` }}
           ></div>
-          <span className="health-label">
+          <p className="health-label">
             {currentHealth} / {maxHealth} HP
-          </span>
+          </p>
         </div>
-        {effects.length > 0 && (
-          <div className="status-effects">
-            <strong>Effects:</strong>{" "}
-            {effects.map((effect, idx) => (
-              <span
+
+        <div className="status-effects">
+          {effects.map((effect, idx) => {
+            const displayLetter =
+              effect.toLowerCase() === "asleep"
+                ? "Z"
+                : effect.charAt(0).toUpperCase();
+
+            return (
+              <div
                 key={idx}
-                className="effect-pill"
-                onClick={() =>
-                  setPendingRemoval({ effect, playerKey, label })
-                }
+                className={`effect-pill ${effect.toLowerCase()}`}
+                onClick={() => setPendingRemoval({ effect, playerKey, label })}
               >
-                {effect}
-              </span>
-            ))}
-          </div>
-        )}
+                <p>{displayLetter}</p>
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   };
@@ -61,7 +64,11 @@ const PokemonDisplay = ({
 
   return (
     <div className="status">
-      {renderHealthBar("Their Pokémon", theirPokemon, isPlayer1 ? "Player 2" : "Player 1")}
+      {renderHealthBar(
+        "Their Pokémon",
+        theirPokemon,
+        isPlayer1 ? "Player 2" : "Player 1"
+      )}
       {renderHealthBar("Your Pokémon", yourPokemon, currentTurn)}
 
       {pendingRemoval && (
@@ -70,15 +77,15 @@ const PokemonDisplay = ({
             <p>
               Are you sure you want to remove{" "}
               <strong>{pendingRemoval.effect}</strong> from{" "}
-              <strong>
-                {pendingRemoval.label.toLowerCase()}
-              </strong>{" "}
-              Pokémon?
+              <strong>{pendingRemoval.label.toLowerCase()}</strong> Pokémon?
             </p>
             <div className="confirm-buttons">
               <button
                 onClick={() => {
-                  onRemoveEffect(pendingRemoval.playerKey, pendingRemoval.effect);
+                  onRemoveEffect(
+                    pendingRemoval.playerKey,
+                    pendingRemoval.effect
+                  );
                   setPendingRemoval(null);
                 }}
               >
